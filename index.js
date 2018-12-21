@@ -1,17 +1,18 @@
 import * as fsys from './src/fsys'
+import * as dataModification from './src/data-modification'
+import * as ajax from './src/ajax'
 
-let fs = require('fs')
+const $ = require('jquery')
 
-
-const PROMISE = new Promise((resolve, reject) => {
-    return {resolve, reject}
-})
+// const fs = require('fs')
 
 const funcList = {
-    ...fsys
+    ...fsys,
+    ...dataModification,
+    ...ajax
 }
 
-console.log(fs)
+// console.log(fs)
 
 let func = Object.keys(funcList)
 
@@ -19,8 +20,10 @@ let list = {}
 
 func.map((it) => {
     list[it] = ({...args}) => {
-        funcList[it]({fs, promise: PROMISE}, {...args})
+        return new Promise((resolve, reject) => {
+            return funcList[it]({resolve, reject}, {...args})
+        })
     }
 })
 
-// window.list = list
+window.list = list
