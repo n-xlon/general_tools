@@ -15,38 +15,42 @@ export function requestAjax ({resolve, reject}, args) {
         if (typeof requestMsg.data === 'undefined') {
             requestMsg.data = {}
         }
-        $.ajax({
-            url: '',
-            data: {},
-            type: 'POST',
-            dataType: 'json',
-            ...requestMsg,
-            success: (data) => {
-                if (data.code && data.code === 200) {
-                    resolve(data.data)
-                } else {
-                    resolve(data)
-                }
-            },
-            complete: (xml, status) => {
-                if (status === 'timeout') {
-                    reject('Error: request timeout!')
-                }
-            },
-            error: (err) => {
-                let errMsg = {}
-                if (typeof err.responseJSON === 'string') {
-                    errMsg = JSON.parse(err.response)
-                } else {
-                    errMsg = err.responseJSON
-                }
-                if ('message' in errMsg) {
-                    reject(errMsg.message)
-                }
-                reject('Error: request fail')
-            }
-        })
+        ajaxApi(requestMsg)
     } else {
         reject('Error: request url is empty!')
     }
+}
+
+function ajaxApi (args) {
+	$.ajax({
+		url: '',
+		data: {},
+		type: 'POST',
+		dataType: 'json',
+		...args,
+		success: (data) => {
+			if (data.code && data.code === 200) {
+				resolve(data.data)
+			} else {
+				resolve(data)
+			}
+		},
+		complete: (xml, status) => {
+			if (status === 'timeout') {
+				reject('Error: request timeout!')
+			}
+		},
+		error: (err) => {
+			let errMsg = {}
+			if (typeof err.responseJSON === 'string') {
+				errMsg = JSON.parse(err.response)
+			} else {
+				errMsg = err.responseJSON
+			}
+			if ('message' in errMsg) {
+				reject(errMsg.message)
+			}
+			reject('Error: request fail')
+		}
+	})
 }

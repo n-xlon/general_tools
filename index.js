@@ -1,8 +1,10 @@
 import * as fsys from './src/fsys'
 import * as dataModification from './src/data-modification'
 import * as ajax from './src/ajax'
+import { isFields } from './src/props'
 
 const $ = require('jquery')
+const list = {}
 
 // const fs = require('fs')
 
@@ -13,15 +15,16 @@ const funcList = {
 }
 
 // console.log(fs)
+const props = {
+	too: { isFields }
+}
 
 let func = Object.keys(funcList)
-
-let list = {}
 
 func.map((it) => {
     list[it] = ({...args}) => {
         return new Promise((resolve, reject) => {
-            return funcList[it]({resolve, reject}, {...args})
+            return funcList[it]({...props, resolve, reject}, {...args})
         })
     }
 })
