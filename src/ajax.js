@@ -15,42 +15,71 @@ export function requestAjax ({resolve, reject}, args) {
         if (typeof requestMsg.data === 'undefined') {
             requestMsg.data = {}
         }
-        ajaxApi(requestMsg)
+        return list.ajaxApi(requestMsg).then((data) => {
+        	resolve(data)
+		}).catch((e) => {
+        	reject(e.message)
+		})
     } else {
         reject('Error: request url is empty!')
     }
 }
 
-function ajaxApi (args) {
+export function ajaxApi ({resolve, reject}, args) {
 	$.ajax({
 		url: '',
 		data: {},
 		type: 'POST',
 		dataType: 'json',
 		...args,
-		success: (data) => {
+		success: (data, status, request) => {
+			console.log(req.getResponseHeader('Content-Length'))
 			if (data.code && data.code === 200) {
 				resolve(data.data)
 			} else {
 				resolve(data)
 			}
 		},
-		complete: (xml, status) => {
+		complete: (xml, data, status) => {
+			console.log(xml, data, xml.getResponseHeader('server'))
 			if (status === 'timeout') {
 				reject('Error: request timeout!')
 			}
 		},
 		error: (err) => {
 			let errMsg = {}
+			console.log(err)
 			if (typeof err.responseJSON === 'string') {
 				errMsg = JSON.parse(err.response)
 			} else {
 				errMsg = err.responseJSON
 			}
+			console.log(errMsg, 111)
 			if ('message' in errMsg) {
-				reject(errMsg.message)
+				reject(errMsg)
 			}
-			reject('Error: request fail')
+			reject({message: 'Error: request fail'})
 		}
 	})
+}
+
+export function requestHeaderMsg ({resolve, reject}, {url, headers = {}, dataType = 'BINARY'}) {
+	let xmlRequest = ''
+	if (window.XMLHttpRequest) {
+        xmlRequest = new window.XMLHttpRequest()
+		if (dataType === 'BINARY') {
+        	xmlRequest.responseType = 'arraybuffer'
+		}
+        xmlRequest.onreadystatechange = () => {
+            if (xmlRequest.readyState === 2) {
+                console.log(xmlRequest.getAllResponseHeaders())
+				xmlRequest.abort()
+            }
+        }
+        xmlRequest.open('HEAD', url, true)
+		if (Object.keys(headers).length > 0) {
+            xmlRequest.setRequestHeader(headers)
+        }
+		xmlRequest.send()
+	}
 }

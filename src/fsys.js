@@ -9,8 +9,8 @@ export function fileIsExists ({fs, promise}, {path}) {
     })
 }
 
-export function combineFile ({fs, promise}, {souceFiles = [], targetFiles}) {
-    let writeStream = fs.createWriteStream(targetFiles)
+export function combineFile ({fs, resolve, reject}, {souceFiles = [], targetFiles}) {
+    // let writeStream = fs.createWriteStream(targetFiles)
     if (Array.isArray(souceFiles)) {
         souceFiles.forEach((it) => {
             fs.exists(it, (status) => {
@@ -25,16 +25,42 @@ export function combineFile ({fs, promise}, {souceFiles = [], targetFiles}) {
                             })
                             readStream.on('end', () => {
                                 console.log(data)
-                                writeStream.write(data)
+                                fs.appendFile(targetFiles, data, (err) => {
+                                    if (err) {
+                                        throw new Error(err)
+                                    }
+                                })
                             })
                         } else {
-                            promise.reject('error file format!')
+                            reject('error file format!')
                         }
                     })
                 } else {
-                    promise.reject()
+                    reject('Error: file isn`t exist!')
                 }
             })
         })
+        resolve()
     }
+}
+
+/**
+ * 异步写文件
+ * @param filePath  String  文件全路径
+ * @param fileContent  String  文件写入的内容
+ */
+export function writeFile ({resolve, reject}, {filePath, fileContent}) {
+    fs.writeFile(filePath, fileContent, (err) => {
+        if (err) {
+            reject('Error: write file fail!')
+        }
+        resolve({status: true})
+    })
+}
+
+/**
+ * 文件属性（字节数，后缀名，文件类型...)
+ */
+export function fileStat () {
+
 }
