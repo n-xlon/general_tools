@@ -6,6 +6,8 @@ const path = require('path')
 const webpack = require('webpack')
 const fs = require('fs')
 
+// console.log(fs)
+
 module.exports = {
     entry: {
         index: path.resolve(__dirname, './index.js'),
@@ -20,6 +22,9 @@ module.exports = {
     // externals: {
     //     fs: 'commonjs fs'
     // },
+    resolve: {
+        extensions: [".js"]
+    },
     module: {
         rules: [
             {
@@ -41,6 +46,8 @@ module.exports = {
             }
         ]
     },
+    plugins: [
+    ],
     // node: {
     //     fs: true
     // },

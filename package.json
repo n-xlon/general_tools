@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack -p --mode=development --display-modules --display-chunks --config webpack.config.js",
+    "proc": "npm run build && node ./server.js",
     "dev": "webpack-dev-server --mode=development --inline --hot --open --content-base dist"
   },
   "author": "xm",

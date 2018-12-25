@@ -6,7 +6,7 @@ import { isFields } from './src/props'
 const $ = require('jquery')
 const list = {}
 
-// import fs from 'fs'
+// const fs = require('fs')
 
 const funcList = {
     ...fsys,

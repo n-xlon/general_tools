@@ -31,6 +31,7 @@ export function ajaxApi ({resolve, reject}, args) {
 		data: {},
 		type: 'POST',
 		dataType: 'json',
+        crossDomain: true,
 		...args,
 		success: (data, status, request) => {
 			console.log(req.getResponseHeader('Content-Length'))
